@@ -161,12 +161,11 @@ getUserFormValues(){
 
         if(this.formIsInvalid === false){
           this.usersService.updateUser(updatedUser).subscribe(() => {
-          });
-          if (HttpStatusCode.Ok) {
             this.successAlert('edited');
-          } else {
+          },error => {
             this.errorAlert('edited');
-          }
+          });
+
         }
 
     } else {
@@ -174,12 +173,15 @@ getUserFormValues(){
       if(this.formIsInvalid === false){
         console.log(this.formIsInvalid);
         this.usersService.createUser(this.getUserFormValue).subscribe(() => {
-        });
-        if (HttpStatusCode.Ok) {
           this.successAlert('added');
-        } else {
+         },error => {
           this.errorAlert('added');
-        }
+        });
+        // if(HttpStatusCode.InternalServerError){
+        //   this.errorAlert('added');
+        // } else {
+        //   this.successAlert('added');
+        // }
       }
       }
     }
