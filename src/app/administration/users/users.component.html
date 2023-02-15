@@ -1,0 +1,161 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+<h1><strong>{{title}}</strong></h1>
+<div class="marginTop20">
+  <br>
+  <div class="container-xxl">
+    <div>
+      <div>
+        <div class="table-title">
+          <div class="row">
+            <div class="col-md-8">
+<!--              <h2>User Details</h2>-->
+            </div>
+            <div class="col-md-4">
+<!--            onclick="document.getElementById('id01').style.display='block'    -->
+              <button class="btn btn-primary  addUser" (click)="openModal(user)"><b>Add User  <i class="bi bi-person-plus-fill"></i></b></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        <div class="tablediv">
+          <table class="table table-bordered data-auto-refresh">
+            <thead class="table-dark">
+            <tr>
+              <th>Id</th>
+              <th *ngFor="let col of cols">{{col.header}}</th>
+              <th>Actions</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr *ngFor="let user of userList">
+              <td>{{user['id']}}</td>
+              <td *ngFor="let col of cols">{{user[col.field]}}</td>
+              <td>
+                <button  class=" editUser btn btn-secondary btn-sm" (click)="openModal(user)"><i class="bi bi-pen"></i></button>
+              </td>
+            </tr>
+            <tr></tr>
+            </tbody>
+
+          </table>
+        </div>
+    </div>
+  </div>
+</div>
+
+<!-- The Modal (contains the Add User form) -->
+<div id="id01" class="modal">
+  <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal"></span>
+  <div class="modal-content" action="" [formGroup]="userForm" (ngSubmit)="submit()">
+
+    <div class="container">
+      <form [formGroup]="userForm">
+      <h1>{{modalTitle}}</h1>
+      <p>Please fill in this form to {{description}}</p>
+      <hr>
+<!--      Div  for firstname and surname-->
+      <div class="inputform">
+      <div class="row">
+        <div class="col-sm-6">
+          <label for="firstname"><b>Firstname:</b></label>
+          <input type="text" id="firstname" name="firstname" formControlName="firstname"
+          [class]="(formIsInvalid && userForm.get('firstname').errors)?'ng-invalid':''"
+                 style="text-transform: capitalize">
+          <div *ngIf="userForm.get('firstname')?.touched && userForm.get('firstname')?.errors?.['required']"
+               class="error">
+            Firstname is required
+          </div>
+
+
+        </div>
+        <div class="col-sm-4">
+          <label for="surname"><b>Surname:</b></label>
+          <input type="text" id="surname" name="surname" formControlName="surname" required
+                 [class]="(formIsInvalid && userForm.get('surname').errors)?'ng-invalid':''"
+                 style="text-transform: capitalize">
+          <div *ngIf="userForm.get('surname')?.touched && userForm.get('surname')?.errors?.['required']"
+               class="error">
+            surname is required
+          </div>
+        </div>
+      </div>
+
+<!--Div for idNumber and email-->
+      <div class="row">
+        <div class="col-sm-6">
+          <label for="idNumber"><b>ID Number:</b></label>
+          <input type="text" id="idNumber" name="idNumber" formControlName="idNumber" maxlength="13" minlength="13" required
+                 [class]="(formIsInvalid && userForm.get('idNumber').errors)?'ng-invalid':''">
+          <div *ngIf="userForm.get('idNumber')?.touched && userForm.get('idNumber')?.errors?.['required']"
+               class="error">
+            ID Number is required
+          </div>
+          <div *ngIf="userForm.get('idNumber').errors?.['minlength']" class="error">
+            ID must be at least 13 characters long.
+          </div>
+          <div *ngIf="userForm.get('idNumber').errors?.['pattern']" class="error">
+            ID must only be numbers
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <label for="email"><b>Email:  </b></label>
+          <input type="text" id="email" name="email" formControlName="email"  required
+                 [class]="(formIsInvalid && userForm.get('email').errors)?'ng-invalid':''">
+          <div *ngIf="userForm.get('email')?.touched && userForm.get('email')?.errors?.['required']"
+               class="error">
+            Email is required
+          </div>
+          <div *ngIf="userForm.get('email')?.errors?.['pattern']" class="error">
+            Email must contain @ and .
+          </div>
+        </div>
+      </div>
+
+      <!-- div for password and username    -->
+      <div class="row">
+        <div class="col-sm-6">
+            <label for="username"><b>Username: </b></label>
+            <input type="text" id="username" name="username" formControlName="username" form required value="{{autoGenerateUsername()}}"
+                   [class]="(formIsInvalid && userForm.get('username').errors)?'ng-invalid':''">
+          <div *ngIf="userForm.get('username')?.touched && userForm.get('username')?.errors?.['required']"
+               class="error">
+            Username is required
+          </div>
+          </div>
+
+        <div class="col-sm-6">
+          <label for="password"><b>Password: </b></label>
+
+          <input [type]=" showPassword ? 'text' : 'password' " id="password" name="password" formControlName="password"  required
+                 [class]="(formIsInvalid && userForm.get('password').errors)?'ng-invalid':''"
+          />
+
+          <div class="eye btn-lg" (click)="showHidePassword()" item-right>
+              <i id="togglePassword" [classList]="showPassword ? 'far fa-eye':'far fa-eye-slash'"></i>
+            </div>
+
+        </div>
+
+          <div *ngIf="userForm.get('password')?.touched && userForm.get('password')?.errors?.['required']"
+               class="error">
+            Password is required
+          </div>
+          <div *ngIf="userForm.get('password')?.errors?.['pattern']" class="error">
+            Password must have min 8 characters, mix of upper and lower case letters and special characters
+          </div>
+        </div>
+<!--      Div for buttons-->
+      <div class="clearfix">
+        <button type="button" (click)="closeModal()" class="cancelbtn btn btn-secondary"><b>Cancel</b></button>
+        <button type="submit" class="addUser btn btn-secondary"><b>Save</b></button>
+      </div>
+    </div>
+</form>
+</div>
+  </div>
+</div>
+
+
+
